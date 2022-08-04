@@ -49,6 +49,7 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 
 ### Special Thanks
 - [TheZoroForce240](https://github.com/TheZoroForce240) - Helped with.................................... shit
+- [TuckerTheTucker](https://twitter.com/TuckerTheTucker) - Made the Cool Cinema Bars and stuff
 
 ### Kade Engine
 - [KadeDeveloper](https://twitter.com/KadeDeveloper) - Maintainer and lead programmer

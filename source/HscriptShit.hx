@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.effects.FlxFlicker;
 import flixel.system.FlxSound;
@@ -149,7 +150,7 @@ class HscriptShit //funni modcharts
         interp.variables.set("scriptableCamera", 'false');
         interp.variables.set("dance", function (char:Character) {});
 
-        interp.variables.set("init", function (char:Character) {}); //this one function is causing so many problems.
+        interp.variables.set("init", function (char:Character) {});
         interp.variables.set("loadColor", function (character:Character) {});
 
         interp.variables.set("onCharChange", function (char:Character) {}); 
@@ -193,6 +194,7 @@ class HscriptShit //funni modcharts
         interp.variables.set("exitPauseMenu", function () {}); 
         interp.variables.set("onGitarooPause", function () {}); 
         interp.variables.set("onPauseMenu", function () {}); 
+        interp.variables.set("onCinematicMode", function () {}); 
         
         //modding+ things
 
@@ -254,7 +256,8 @@ class HscriptShit //funni modcharts
         interp.variables.set("HSVShader", HSVShader);
         interp.variables.set("RayMarchEffect", RayMarchEffect);
         interp.variables.set("RayMarchShader", RayMarchShader);
-
+        //FlxAtlasFrames
+        interp.variables.set("FlxAtlasFrames", FlxAtlasFrames);
 
 
         interp.variables.set("add", function(obj:FlxBasic) 
@@ -264,6 +267,12 @@ class HscriptShit //funni modcharts
         interp.variables.set("remove", function(obj:FlxBasic) 
         {
             FlxG.state.remove(obj);
+        });
+
+        interp.variables.set("toggleCinematic", function() 
+        {
+            trace("attempted to change cinematic");
+            PlayState.instance.toggleCinematicMode();
         });
 
         /*interp.variables.set("P1Health", PlayState.instance.P1Stats.health); //apparently these dont wanna work, can access directly through playstate though

@@ -4,10 +4,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
-
-import flixel.FlxSprite;
-import flixel.animation.FlxBaseAnimation;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flash.display.BitmapData;
 import lime.utils.Assets;
 import lime.system.System;
@@ -89,6 +85,8 @@ class Character extends FlxSprite
 	public var enemyOffsetY:Int = 0;
 	public var camOffsetX:Int = 0;
 	public var camOffsetY:Int = 0;
+	public var playerOffsetX:Int = 0;
+	public var playerOffsetY:Int = 0;
 	public var followCamX:Int = 0;
 	public var followCamY:Int = 0;
 	public var midpointX:Int = 0;
@@ -218,7 +216,6 @@ class Character extends FlxSprite
 					isPsychFile = true;
 
 				if (FileSystem.exists("assets/images/custom_chars/"+curCharacter+".hscript")) {
-					var tex:FlxAtlasFrames;
 					antialiasing = true;
 
 					curCharacter = curCharacter.trim();
@@ -557,7 +554,7 @@ class Character extends FlxSprite
 			switch (curCharacter)
 			{
 				case 'gf' | 'gf-christmas':
-					like = "bf";
+					like = "gf";
 				case 'bf' | 'bf-christmas':
 					like = "bf";
 				case 'mom' | 'mom-car':
@@ -732,6 +729,13 @@ class Character extends FlxSprite
 			}
 		}
 //	}
+	}
+
+	function initiateSetup(name:String = "char")
+	{
+		var tex:FlxAtlasFrames;
+		tex = FlxAtlasFrames.fromSparrow(hscriptPath + name + '.png', hscriptPath + name + '.xml');
+		frames = tex;
 	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void

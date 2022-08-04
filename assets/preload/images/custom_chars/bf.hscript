@@ -9,9 +9,10 @@ function init(char) {
     
     //var pic:BitmapData = BitmapData.fromFile(char.hscriptPath + 'char.png');
     //var xml:String = char.hscriptPath + 'char.xml';
-    var tex = FlxAtlasFrames.fromSparrow(char.hscriptPath + 'char.png', char.hscriptPath + 'char.xml');
+    //var tex = FlxAtlasFrames.fromSparrow(char.hscriptPath + 'char.png', char.hscriptPath + 'char.xml');
+    char.initiateSetup("char");
     trace("done");
-    char.frames = tex;
+    //char.frames = tex;
     char.animation.addByPrefix('idle', 'BF idle dance', 24, false);
     if (char.isPlayer) {
         char.animation.addByPrefix('singLEFT','BF NOTE LEFT0', 24, false);
@@ -82,8 +83,6 @@ function init(char) {
     char.midpointY = 0;
     //custom health bar colors are handled in a seprate hscript.
 }
-portraitOffset = [0, 0];
-dadVar = 4.0;
 isPixel = false;
 var danced = false;
 function dance(char) {

@@ -143,6 +143,10 @@ class PlayState extends MusicBeatState
 	public static var backwardSong:Bool = false;
 	public static var randomModchartEffects:Bool = false;
 
+	//cinema stuff
+	var cinemaBG:FlxSprite;
+	private var camCinema:FlxCamera;
+
 	//characters
 	public static var dad:Character = null;
 	public static var gf:Character = null;
@@ -533,7 +537,7 @@ class PlayState extends MusicBeatState
 		removedVideo = false;
 
 		#if windows
-		executeModchart = FileSystem.exists(Paths.lua(songLowercase  + "/modchart"));
+		executeModchart = FileSystem.exists(Paths.lua(songLowercase));
 		if (executeModchart)
 			PlayStateChangeables.Optimize = false;
 		#end
@@ -541,7 +545,7 @@ class PlayState extends MusicBeatState
 		executeModchart = false; // FORCE disable for non cpp targets
 		#end
 
-		trace('Mod chart: ' + executeModchart + " - " + Paths.lua(songLowercase + "/modchart"));
+		trace('Mod chart: ' + executeModchart + " - " + Paths.lua(songLowercase));
 
 
 		noteSplashes = new FlxTypedGroup<NoteSplash>();
@@ -587,14 +591,18 @@ class PlayState extends MusicBeatState
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
+
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camSustains = new FlxCamera();
 		camSustains.bgColor.alpha = 0;
 		camNotes = new FlxCamera();
 		camNotes.bgColor.alpha = 0;
+		camCinema = new FlxCamera();
+		camCinema.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camCinema);
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camSustains);
 		FlxG.cameras.add(camNotes);
@@ -625,51 +633,20 @@ class PlayState extends MusicBeatState
 
 		trace('INFORMATION ABOUT WHAT U PLAYIN WIT:\nFRAMES: ' + PlayStateChangeables.safeFrames + '\nZONE: ' + Conductor.safeZoneOffset + '\nTS: ' + Conductor.timeScale + '\nBotPlay : ' + PlayStateChangeables.botPlay);
 	
-		// prefer player 1
-		if (FileSystem.exists('assets/images/custom_chars/'+SONG.player1+'/'+SONG.song.toLowerCase()+'Dialog.txt')) {
-			dialogue = CoolUtil.coolDynamicTextFile('assets/images/custom_chars/'+SONG.player1+'/'+SONG.song.toLowerCase()+'Dialog.txt');
-		// if no player 1 unique dialog, use player 2
-		} else if (FileSystem.exists('assets/images/custom_chars/'+SONG.player2+'/'+SONG.song.toLowerCase()+'Dialog.txt')) {
-			dialogue = CoolUtil.coolDynamicTextFile('assets/images/custom_chars/'+SONG.player2+'/'+SONG.song.toLowerCase()+'Dialog.txt');
-		// if no player dialog, use default
-		}	
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/dialog.txt')) 
+		if (FileSystem.exists('assets/data/dialogue/'+SONG.song.toLowerCase()+'.txt'))
 		{
-			dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/dialog.txt');
-		} 
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/dialogue.txt'))
-		{
-			// nerds spell dialogue properly gotta make em happy
-			dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/dialogue.txt');
-		// otherwise, make the dialog an error message
-		} 
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/Dialogue.txt'))
-		{
-			dialogue = CoolUtil.coolDynamicTextFile('assets/data/' + SONG.song.toLowerCase() + '/dialogue.txt');
+			dialogue = CoolUtil.coolDynamicTextFile('assets/data/dialogue/'+SONG.song.toLowerCase()+'.txt');
 		}	 
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'Dialogue.txt'))
-			{
-				dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'Dialogue.txt');
-			}	 
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'Dialog.txt'))
-		{
-			// nerds spell dialogue properly gotta make em happy
-			dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'Dialog.txt');
-			// otherwise, make the dialog an error message
-		} //people who dont use caps, we got u
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'dialogue.txt'))
-			{
-				dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'dialogue.txt');
-			}	 
-		else if (FileSystem.exists('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'dialog.txt'))
-		{
-			// nerds spell dialogue properly gotta make em happy
-			dialogue = CoolUtil.coolDynamicTextFile('assets/data/'+SONG.song.toLowerCase()+'/'+SONG.song.toLowerCase()+'dialog.txt');
-			// otherwise, make the dialog an error message
-		} 
 		else {
-			dialogue = [':dad: The game tried to get a dialog file but couldn\'t find it. Please make sure there is a dialog file named "dialog.txt".'];
+			dialogue = [':dad: The game tried to get a dialog file but couldn\'t find it. Please make sure there is a dialog file named "dialog.txt" inside the Dialogue folder.'];
 		}
+
+		cinemaBG = new FlxSprite(0, 0).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
+		cinemaBG.screenCenter();
+		cinemaBG.scrollFactor.set();
+		cinemaBG.alpha = 0;
+		add(cinemaBG);
+
 		call("dialogueGenerated", []); //dk why i added this.
 		modchartStorage = new Map<String, Dynamic>();
 		//defaults if no stage was found in chart
@@ -1648,6 +1625,7 @@ class PlayState extends MusicBeatState
 			boyfriend = new Boyfriend(770, 450, SONG.player1, true);
 		}
 
+
 		call("characterMade", [dad]);
 		call("characterMade", [boyfriend]);
 		call("characterMade", [gf]);
@@ -1687,6 +1665,26 @@ class PlayState extends MusicBeatState
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 		if (PlayStateChangeables.flip)
 			camPos.set(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
+
+		switch (SONG.player1) // no clue why i didnt think of this before lol
+		{
+			default:
+				//boyfriend.x += boyfriend.bfOffsetX; //just use sprite offsets
+				//boyfriend.y += boyfriend.bfOffsetY;
+				camPos.x += boyfriend.camOffsetX;
+				camPos.y += boyfriend.camOffsetY;
+				boyfriend.x += boyfriend.playerOffsetX;
+				boyfriend.y += boyfriend.playerOffsetY;
+				if (boyfriend.likeGf) {
+					boyfriend.setPosition(gf.x, gf.y);
+					gf.visible = false;
+					if (isStoryMode)
+					{
+						camPos.x += 600;
+						tweenCamIn();
+					}
+				}
+		}
 
 		switch (SONG.player2)
 		{
@@ -1953,8 +1951,8 @@ class PlayState extends MusicBeatState
 
 		FlxG.fixedTimestep = false;
 
-		if (FlxG.save.data.songPosition) // I dont wanna talk about this code :(
-			{
+		/*if (FlxG.save.data.songPosition) // I dont wanna talk about this code :(
+		{
 				songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('healthBar'));
 				if (PlayStateChangeables.useDownscroll)
 					songPosBG.y = FlxG.height * 0.9 + 45; 
@@ -1975,7 +1973,7 @@ class PlayState extends MusicBeatState
 				songName.scrollFactor.set();
 				add(songName);
 				songName.cameras = [camHUD];
-			}
+		}*/
 
 		healthBarBG = new FlxSprite(0, FlxG.height * 0.9).loadGraphic(Paths.image('healthBar'));
 		if (PlayStateChangeables.useDownscroll)
@@ -2071,7 +2069,7 @@ class PlayState extends MusicBeatState
 		iconP2.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
-		if (FlxG.save.data.songPosition) { songPosBG.cameras = [camHUD]; songPosBar.cameras = [camHUD];	}
+		//if (FlxG.save.data.songPosition) { songPosBG.cameras = [camHUD]; songPosBar.cameras = [camHUD];	}
 
 		difficTxt.cameras = [camHUD];
 		if (loadRep) replayTxt.cameras = [camHUD];
@@ -2563,6 +2561,12 @@ class PlayState extends MusicBeatState
 	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
+	//more cinema shit.
+	var cinToggled:Bool = false;
+	var topBorder:FlxSprite;
+	var bottomBorder:FlxSprite;
+	var theight:Int = 150;
+	var bheight:Int = 100;
 
 	private function getKey(charCode:Int):String
 	{
@@ -3210,9 +3214,9 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.save.data.songPosition)
 		{
-			remove(songPosBG);
-			remove(songPosBar);
-			remove(songName);
+			//remove(songPosBG);
+			//remove(songPosBar);
+			//remove(songName);
 
 			songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('healthBar'));
 			if (PlayStateChangeables.useDownscroll)
@@ -3221,14 +3225,12 @@ class PlayState extends MusicBeatState
 			songPosBG.scrollFactor.set();
 			add(songPosBG);
 
-		//	try {
 			songPosBar = new FlxBar(songPosBG.x + 4, songPosBG.y + 4, LEFT_TO_RIGHT, Std.int(songPosBG.width - 8), Std.int(songPosBG.height - 8), this,
 				'songPositionBar', 0, songLength - 1000);
 			songPosBar.numDivisions = 1000;
 			songPosBar.scrollFactor.set();
 			songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
 			add(songPosBar);
-		//	} catch (exception) {trace(exception);}
 
 			var songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - (SONG.song.length * 5),songPosBG.y,0,SONG.song, 16);
 			if (PlayStateChangeables.useDownscroll)
@@ -3252,14 +3254,14 @@ class PlayState extends MusicBeatState
 		if (useVideo)
 			GlobalVideo.get().resume();
 
-		try {
+	/*	try {
 			songPosBar = new FlxBar(songPosBG.x + 4, songPosBG.y + 4, LEFT_TO_RIGHT, Std.int(songPosBG.width - 8), Std.int(songPosBG.height - 8), this,
 				'songPositionBar', 0, songLength - 1000);
 			songPosBar.numDivisions = 1000;
 			songPosBar.scrollFactor.set();
 			songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
 			add(songPosBar);
-			} catch (exception) {trace(exception);}
+			} catch (exception) {trace(exception);}*/
 		
 		#if windows
 		// Updating Discord Rich Presence (with Time Left)
@@ -5441,8 +5443,12 @@ class PlayState extends MusicBeatState
 
 		#if debug
 		if (FlxG.keys.justPressed.ONE)
+		{
 			endSong();
-		call('endScript', []);
+			call('endScript', []);
+		}
+
+		if (FlxG.keys.justPressed.THREE) {toggleCinematicMode();}
 		#end
 	}
 
@@ -5656,19 +5662,19 @@ class PlayState extends MusicBeatState
 				case 'shit':
 					score = -300;
 					combo = 0;
-				//	misses++; //shits giving miss is bs
-					if (!FlxG.save.data.gthm)
-						health -= 0.0575 * healthLossMultiplier;
+					//if (!FlxG.save.data.gthm)
+					//	health -= 0.0575 * healthLossMultiplier;
+					health += daNote.hitHealth * healthGainMultiplier;
 					ss = false;
 					shits++;
 					if (FlxG.save.data.accuracyMod == 0)
-					//	totalNotesHit -= 1;
 						totalNotesHit += 0.25;
 				case 'bad':
 					daRating = 'bad';
 					score = 0;
-					if (!FlxG.save.data.gthm)
-						health -= 0.0475 * healthLossMultiplier;
+					//if (!FlxG.save.data.gthm)
+					//	health -= 0.0475 * healthLossMultiplier;
+					health += daNote.hitHealth * healthGainMultiplier;
 					ss = false;
 					bads++;
 					if (FlxG.save.data.accuracyMod == 0)
@@ -5679,12 +5685,12 @@ class PlayState extends MusicBeatState
 					ss = false;
 					goods++;
 					if (health < 2)
-						health += 0.02 * healthGainMultiplier;
+						health += daNote.hitHealth * healthGainMultiplier;
 					if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 0.75;
 				case 'sick':
 					if (health < 2)
-						health += 0.03 * healthGainMultiplier;
+						health += daNote.hitHealth * healthGainMultiplier;
 					if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 1;
 					sicks++;
@@ -6644,7 +6650,7 @@ class PlayState extends MusicBeatState
 	{
 		if (!boyfriend.stunned)
 		{
-			health -= 0.04;
+			health -= daNote.missHealth;
 			if (combo > 5 && gf.animOffsets.exists('sad'))
 			{
 				gf.playAnim('sad');
@@ -6710,6 +6716,61 @@ class PlayState extends MusicBeatState
 			updateAccuracy();
 		}
 	*/
+
+	public function toggleCinematicMode():Void
+	{
+			//i wanted to try returns for once so uh yeah
+			if (inCutscene)
+				return;
+
+			call('onCinematicMode', []);
+			trace("toggling cinema mode");
+			
+			cinToggled = !cinToggled;
+			
+			if (cinToggled)
+			{
+				topBorder = new FlxSprite(0, -theight).makeGraphic(FlxG.width, theight, FlxColor.BLACK);
+				topBorder.screenCenter(X);
+				topBorder.scrollFactor.set();
+				topBorder.cameras = [camCinema];
+				add(topBorder);
+				
+				bottomBorder = new FlxSprite(0, FlxG.height).makeGraphic(FlxG.width, bheight, FlxColor.BLACK);
+				bottomBorder.screenCenter(X);
+				bottomBorder.scrollFactor.set();
+				bottomBorder.cameras = [camCinema];
+				add(bottomBorder);
+				
+				FlxTween.tween(topBorder, {y: topBorder.y + theight}, 0.4, {ease: FlxEase.quadOut});
+				FlxTween.tween(bottomBorder, {y: bottomBorder.y - bheight}, 0.4, {ease: FlxEase.quadOut});
+				
+				FlxTween.tween(camHUD, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});
+				FlxTween.tween(cinemaBG, {alpha: 0.9}, 0.4, {ease: FlxEase.quadOut});
+				defaultCamZoom = defaultCamZoom + 0.2;
+			}
+			else
+			{
+				FlxTween.tween(topBorder, {y: topBorder.y - theight}, 0.4, {ease: FlxEase.quadOut,
+					onComplete: function(twn:FlxTween)
+					{
+						remove(topBorder);
+					}
+				});
+				
+				FlxTween.tween(bottomBorder, {y: bottomBorder.y + bheight}, 0.4, {ease: FlxEase.quadOut,
+					onComplete: function(twn:FlxTween)
+					{
+						remove(bottomBorder);
+					}
+				});
+				
+				FlxTween.tween(camHUD, {alpha: 1}, 0.4, {ease: FlxEase.quadOut});
+				FlxTween.tween(cinemaBG, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});
+				defaultCamZoom = defaultCamZoom - 0.2;
+			}
+	}
+
 	public function createFilledBar():Void
 		{
 			/*var colorJson:Dynamic = null; //safe gard
@@ -7956,10 +8017,11 @@ class PlayState extends MusicBeatState
 				{
 					if (!note.isSustainNote)
 					{
-						popUpScore(note);
 						combo += 1;
+						if(combo > 9999) combo = 9999;
+						popUpScore(note);
 					}
-					else
+					else 
 						totalNotesHit += 1;
 	
 					var altAnim:String = "";

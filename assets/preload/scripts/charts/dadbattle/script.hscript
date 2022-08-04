@@ -48,12 +48,16 @@ function update ()  // activates every ms i think
 
 function stepHit ()  // activates every step (curStep)
 {
-    
+    switch (step)
+    {
+        case 385, 640:
+            PlayState.instance.toggleCinematicMode();
+    }
 }
     
 function beatHit () // activates every beat (basically camZoom but better)
 {
-        
+
 }
         
 function P1NoteHit (note) // when you hit a note as bf //note has the noteType. maybe like accelarant you can make dad play anim when bf hits note?

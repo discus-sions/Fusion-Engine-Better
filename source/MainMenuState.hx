@@ -69,7 +69,7 @@ class MainMenuState extends MusicBeatState
 	public static var nightly:String = "";
 	public static var kadeEngineVerNum:String = "0.4" + nightly;
 
-	public static var kadeEngineVer:String = "Better Fusion Engine 0.4" + nightly;
+	public static var kadeEngineVer:String = "Better Fusion Engine 0.5" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
 	var magenta:FlxSprite;
@@ -168,7 +168,7 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, Application.current.meta.get('version') + ' | Better Fusion Engine 0.3 Release', 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "Friday Night Funkin' v" + Application.current.meta.get('version') + ' | Better Fusion Engine 0.5 Release', 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);

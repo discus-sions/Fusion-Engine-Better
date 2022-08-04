@@ -721,6 +721,8 @@ class FreeplayState extends MusicBeatState {
 
 		iconArray[curSelected].alpha = 1;
 
+		changeDiff();
+
 		for (item in grpSongs.members) {
 			item.targetY = bullShit - curSelected;
 			bullShit++;

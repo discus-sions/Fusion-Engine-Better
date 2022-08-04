@@ -88,6 +88,8 @@ class Note extends FlxSprite
 	public var parent:Note = null;
 	public var spotInLine:Int = 0;
 	public var sustainActive:Bool = true;
+	public var hitHealth:Float = 0.023;
+	public var missHealth:Float = 0.0475;
 	public var noteColors:Array<String> = ['purple', 'blue', 'green', 'red', 'white', 'yellow', 'violet', 'darkred', 'dark'];
 //	public var noteColors:Array<String> = ['purple', 'blue', 'green', 'red', 'white', 'yellow', 'violet', 'darkred', 'orange'];
 	//var pixelnoteColors:Array<String> = ['purple', 'blue', 'green', 'red', 'white', 'yellow', 'violet', 'black', 'dark'];

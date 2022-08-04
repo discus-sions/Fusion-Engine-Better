@@ -120,6 +120,7 @@ class ChartingState extends MusicBeatState
 
 	override function create()
 	{
+		lastSection = 0;
 		curSection = lastSection;
 
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
@@ -1451,13 +1452,13 @@ class ChartingState extends MusicBeatState
 	{
 		if (check_mustHitSection.checked)
 		{
-			leftIcon.changeFusionIcon('bf');
-			rightIcon.changeFusionIcon('dad');
+			leftIcon.checkIcon('bf');
+			rightIcon.checkIcon('dad');
 		}
 		else
 		{
-			leftIcon.changeFusionIcon('dad');
-			rightIcon.changeFusionIcon('bf');
+			leftIcon.checkIcon('dad');
+			rightIcon.checkIcon('bf');
 		}
 	}
 

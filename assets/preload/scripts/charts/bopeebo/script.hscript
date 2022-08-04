@@ -48,7 +48,11 @@ function update ()  // activates every ms i think
 
 function stepHit ()  // activates every step (curStep)
 {
-    
+    switch (step)
+    {
+        case 125, 255:
+            PlayState.instance.toggleCinematicMode();
+    }
 }
     
 function beatHit () // activates every beat (basically camZoom but better)

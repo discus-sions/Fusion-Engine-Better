@@ -372,7 +372,7 @@ class ModchartState
 					case 'philly-nice': songLowercase = 'philly';
 				}
 
-				var result = LuaL.dofile(lua, Paths.lua(songLowercase + "/modchart")); // execute le file
+				var result = LuaL.dofile(lua, Paths.lua(songLowercase)); // execute le file
 	
 				if (result != 0)
 				{
@@ -494,6 +494,11 @@ class ModchartState
 				Lua_helper.add_callback(lua,"resumeVideo", function() {
 					if (GlobalVideo.get().paused)
 						GlobalVideo.get().pause();
+				});
+
+				Lua_helper.add_callback(lua,"toggleCinematicMode", function() {
+					trace("attempted to change cinematic");
+            		PlayState.instance.toggleCinematicMode();
 				});
 				
 				Lua_helper.add_callback(lua,"restartVideo", function() {
